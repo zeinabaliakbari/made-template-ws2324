@@ -20,7 +20,6 @@ def read_and_clean_csv(data):
     for col in numeric_columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
         df = df[(df[col].notnull()) & (df[col] > 0)]
-
     return df
 
 def save_to_csv(df, file_path):
