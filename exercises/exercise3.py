@@ -54,14 +54,14 @@ csv_data = fetch_csv_data(url)
 df = read_and_clean_csv(csv_data)
 
 # Step 3: Save cleaned data to a new CSV file
-new_csv_path = 'cleaned_data.csv'
-save_to_csv(df, new_csv_path)
+##new_csv_path = 'cleaned_data.csv'
+##save_to_csv(df, new_csv_path)
 
 # Step 4: Read the new CSV file
-df_new = read_csv(new_csv_path)
+##df_new = read_csv(new_csv_path)
 
 # Step 5: Print the first row of the new CSV file
-print_first_row(df_new)
+##print_first_row(df_new)
 
 # Step 6: Connect to SQLite database
 db_name = "cars.sqlite"
