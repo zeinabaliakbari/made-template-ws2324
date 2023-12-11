@@ -1,0 +1,111 @@
+ //   This Jayvee model describes a pipeline 
+// from a CSV file in the web 
+ 
+pipeline BahnhofPipeline {
+    // See here for meta-data of the data source
+    //  url: "https://download-data.deutschebahn.com/static/datasets/haltestellen/D_Bahnhof_2020_alle.CSV"
+
+    //  At the top of a pipeline, we describe the
+    // structure of the pipeline.  
+    BahnhofExtractor
+        -> BahnhofTextFileInterpreter
+        -> BahnhofCSVInterpreter
+        -> ColumnDeleter
+        -> BahnhofTableInterpreter
+        -> BahnhofSQLiteLoader;
+    
+
+    //  After the pipeline structure, we define the blocks used.
+    block BahnhofExtractor oftype HttpExtractor {
+
+     
+ 
+        url: "https://download-data.deutschebahn.com/static/datasets/haltestellen/D_Bahnhof_2020_alle.CSV";
+    }
+
+    //   The HttpExtractor requires no input and produces a binary file as output.
+ 
+    block BahnhofTextFileInterpreter oftype TextFileInterpreter { }
+
+    //   Next, we interpret the text file as sheet.
+ 
+    block BahnhofCSVInterpreter oftype CSVInterpreter {
+
+        delimiter: ";";
+
+    }
+// Delete Column Status
+    block ColumnDeleter oftype ColumnDeleter {
+
+        delete: [column J];
+    }
+
+
+    block BahnhofTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+ 
+            "EVA_NR" oftype integer,
+            "DS100" oftype text,
+            "IFOPT" oftype IFOPTtype,
+            "NAME" oftype text,
+            "Verkehr" oftype Verkehrtype,
+            "Laenge" oftype Laengetype,
+            "Breite" oftype Breitetype,
+            "Betreiber_Name" oftype text,
+            "Betreiber_Nr" oftype integer,
+            
+        ];
+    }
+
+ 
+    block BahnhofSQLiteLoader oftype SQLiteLoader {
+        table: "trainstopse";
+        file: "trainstopse.sqlite";
+    }
+
+
+}
+
+ 
+valuetype IFOPTtype oftype text {
+    constraints: [
+        IFOPTAllowlist,
+    ];
+}
+constraint IFOPTAllowlist on text:
+    value matches /^[a-z]{2}:\d+:\d+(?::\d+)?$/;   
+
+valuetype Verkehrtype oftype text {
+    constraints: [
+        VerkehrAllowlist,
+    ];
+}
+
+constraint VerkehrAllowlist on text:
+    value in [
+      "FV", "RV", "nur DPN",
+    ];
+
+valuetype Breitetype oftype decimal {
+    constraints: [
+        BreiteScale
+    ];
+}
+constraint BreiteScale oftype RangeConstraint {
+    lowerBound: -90;  
+    upperBound: 90;
+ }
+ 
+valuetype Laengetype oftype decimal {
+    constraints: [
+        LaengeScale
+    ];
+}
+constraint LaengeScale oftype RangeConstraint {
+ 
+    lowerBound: -90;    
+    upperBound: 90;
+   
+ }         
+ 

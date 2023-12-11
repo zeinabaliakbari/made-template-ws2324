@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 import sqlite3
 import os
@@ -71,7 +69,7 @@ if __name__ == "__main__":
         # Add more columns as needed
     }
     current_directory = os.getcwd()
-    database_path = os.path.join(current_directory, 'airports.sqlite')
+    database_path = os.path.join(current_directory, 'airports2.sqlite')
 
     print(f"The SQLite database is located at: {database_path}")
 
