@@ -3,9 +3,8 @@ import sqlite3
 import os
 
 
-def read_csv(file_path):
-    return pd.read_csv(file_path,delimiter=';', error_bad_lines=False)
- 
+def read_csv(file_path):  
+    return pd.read_csv(file_path,delimiter=';', on_bad_lines='skip')
 
 def create_sqlite_connection(database_name):
     conn = sqlite3.connect(database_name)
