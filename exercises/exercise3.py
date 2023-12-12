@@ -32,19 +32,27 @@ def print_first_row(df):
     print("First row of the DataFrame:")
     print(df.head(1))
 
+ 
 def connect_to_database(db_name):
-    return sqlite3.connect(db_name)
+    conn = sqlite3.connect(db_name)
+    return conn, conn.cursor()
 
-def create_sqlite_table(conn, df, table_name, sqlite_types):
-    create_table_query = f"CREATE TABLE IF NOT EXISTS {table_name} ({', '.join([f'{col} {sqlite_types[col]}' for col in df.columns])})"
-    conn.execute(create_table_query)
+def create_sqlite_table(cursor, table_name, sqlite_types):
+    create_table_query = f"""
+    CREATE TABLE IF NOT EXISTS {table_name} (
+        {', '.join([f'{col} {col_type}' for col, col_type in sqlite_types.items()])}
+    );
+    """
+    cursor.execute(create_table_query)
 
-def write_to_sqlite(df, conn, table_name, sqlite_types):
-    df.to_sql(table_name, conn, index=False, if_exists="replace", dtype=sqlite_types)
-
+def write_to_sqlite(df, conn, table_name):
+    df.to_sql(table_name, conn, if_exists='replace', index=False)  
+    
 def close_connection(conn):
+    conn.commit()
     conn.close()
     print("Connection closed.")
+   
 
 # Step 1: Fetch the CSV data from the URL
 url = "https://www-genesis.destatis.de/genesis/downloads/00/tables/46251-0021_00.csv"
@@ -65,17 +73,17 @@ df = read_and_clean_csv(csv_data)
 
 # Step 6: Connect to SQLite database
 db_name = "cars.sqlite"
-conn = connect_to_database(db_name)
+conn, cursor = connect_to_database(db_name)
 
 # Step 7: Create SQLite table with appropriate types
 sqlite_types = {'date': 'TEXT', 'CIN': 'TEXT', 'name': 'TEXT',
                 'petrol': 'BIGINT', 'diesel': 'BIGINT', 'gas': 'BIGINT',
                 'electro': 'BIGINT', 'hybrid': 'BIGINT', 'plugInHybrid': 'BIGINT', 'others': 'BIGINT'}
 table_name = 'cars'
-create_sqlite_table(conn, df, table_name, sqlite_types)
+create_sqlite_table(cursor, table_name, sqlite_types)
 
 # Step 8: Write DataFrame to SQLite database
-write_to_sqlite(df, conn, table_name, sqlite_types)
+write_to_sqlite(df, conn, table_name)
 
 # Step 9: Close the connection
 close_connection(conn)
