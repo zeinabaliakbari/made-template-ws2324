@@ -5,7 +5,9 @@ import sqlite3
 import requests
 import os
 from pathlib import Path
-
+import numpy as np
+from scipy import stats
+from scipy.stats import zscore, iqr
 class Pipeline:
  
     def __init__(self, file1_path, file2_path, output_directory):
@@ -18,8 +20,40 @@ class Pipeline:
        
        
     def read_csv_files(self):
-        self.df1 = pd.read_csv(self.file1_path)
         self.df2 = pd.read_csv(self.file2_path)
+        self.df1 = pd.read_csv(self.file1_path)
+        
+        self.df1 = self.df1.drop(columns=['id'])
+        new_column_names = {
+            'age': 'Age',
+            'bp': 'Blood_Pressure',
+            'sg': 'Specific_Gravity',
+            'al': 'Albumin',
+            'su': 'Sugar',
+            'rbc': 'Red_Blood',
+            'pc': 'Pus_Cell',
+            'pcc': 'Pus_Cell_clumps',
+            'ba': 'Bacteria',
+            'bgr': 'Blood_Glucose_Random',
+            'bu': 'Blood_Urea',
+            'sc': 'Serum_Creatinine',
+            'sod': 'Sodium',
+            'pot': 'Potassium',
+            'hemo': 'Hemoglobin',
+            'pcv': 'Packed_Cell_Volume',
+            'wc': 'White_Blood_Cell_Count',
+            'rc': 'Red_Blood_Cell_Count',
+            'htn': 'Hypertension',
+            'dm': 'Diabetes_Mellitus',
+            'cad': 'Coronary_Artery_Disease',
+            'appet': 'Appetite',
+            'pe': 'Pedal_Edema',
+            'ane': 'Anemia',
+            'Outcome': 'Outcome',                 
+            }
+
+        self.df1 = self.df1.rename(columns=new_column_names)
+        
 
     def normal_to_binary(self):
         # Iterate over columns
@@ -93,14 +127,70 @@ class Pipeline:
  
 
     def zero_with_mean_onecolumn(self ):
-        columnlist= [ "BloodPressure" ,  "SkinThickness", "Insulin"]
-        for column in columnlist:
-            mean_value = self.df2[column].mean()
-            self.df2[column] = self.df2[column].apply(lambda x: mean_value if x ==0  else x)
+
+            # Columns to handle with Z-score
+        zscore_columns = ['Glucose', 'BloodPressure', 'SkinThickness', 'BMI']
+        
+        # Columns to handle with IQR
+        iqr_columns = ['Pregnancies', 'Insulin', 'DiabetesPedigreeFunction', 'Age']
+        
+        # Set the Z-score threshold
+        zscore_threshold = (3, 5)
+        
+        # Set the IQR threshold
+        iqr_threshold = (1.5, 3)
+        
+        # Handle outliers with Z-score
+        for column in zscore_columns:
+            z_scores = zscore(self.df2[column])
+            self.df2[column] = self.df2[column][(z_scores > -zscore_threshold[0]) & (z_scores < zscore_threshold[1])]
+        
+        # Handle outliers with IQR
+        for column in iqr_columns:
+            q1 = self.df2[column].quantile(0.25)
+            q3 = self.df2[column].quantile(0.75)
+            iqr_range = iqr(self.df2[column])
+            
+            lower_bound = q1 - iqr_threshold[0] * iqr_range
+            upper_bound = q3 + iqr_threshold[1] * iqr_range
+            
+            self.df2[column] = self.df2[column][(self.df2[column] > lower_bound) & (self.df2[column] < upper_bound)]
+        
+        # Drop rows with NaN values after handling outliers
+        columns_to_convert = ['Glucose', 'BloodPressure', 'SkinThickness', 'BMI', 'Insulin']
+
+        self.df2[columns_to_convert] = self.df2[columns_to_convert].replace(0, pd.NA)
+        self.df2 = self.df2.dropna()
+         
+
+        # Example usage:
+        # df = pd.read_csv('your_dataset.csv')
+
+        
+         
  
     def merge_dataframes(self):
         merged_df = pd.concat([df1, df2], axis=0, ignore_index=True)
         return merged_df
+
+    def preprocess_data(self):
+        # Display basic information about the dataset
+        print("Dataset Info:")
+        print(self.df1.info())
+
+
+
+        # Handling outliers using Z-score
+        print("\nHandling Outliers:")
+        z_scores = np.abs(stats.zscore(self.df1))
+        threshold = 3
+        data_no_outliers = self.df1[(z_scores < threshold).all(axis=1)]
+
+        print("Number of rows before removing outliers:", len(self.df1))
+        print("Number of rows after removing outliers:", len(data_no_outliers))
+        self.df1=data_no_outliers
+
+
 
     def save_to_sqlite(self, table_name1, table_name2):
         output_database_path = os.path.join(self.output_directory, 'madedb.sqlite')
@@ -109,6 +199,7 @@ class Pipeline:
         self.df2.to_sql(table_name2, engine, index=False, if_exists='replace')
         engine.dispose()
         print(f"SQLite database saved to: {output_database_path}")
+        
 
     def run_pipeline(self, table_name1, table_name2):
 
@@ -123,9 +214,12 @@ class Pipeline:
             self.missing_with_majority()
             self.missing_with_mean()
             self.roundnumbers()
+            
+           #
             self.zero_with_mean_onecolumn()
-            self.df1.to_csv('data/output_file1.csv', index=False)
-            self.df2.to_csv('data/output_file2.csv', index=False)
+            self.preprocess_data()
+            self.df1.to_csv('data/KidneyDisease.csv', index=False)
+            self.df2.to_csv('data/diabetes.csv', index=False)
             #merged_df = data_pipeline.merge_dataframes(df1, df2)
             self.save_to_sqlite( table_name1, table_name2)
 
