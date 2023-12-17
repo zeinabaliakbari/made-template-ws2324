@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to the project directory
-cd C:/.../made-template-ws2324 # I used windows 
+#cd C:/.../made-template-ws2324 
 
 # Activate the virtual environment (replace "made" with the name of your virtual environment)
 # Uncomment the line below if you are using a virtual environment
