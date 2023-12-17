@@ -14,8 +14,14 @@
 
 # Run the Python tests
  
-python -m unittest discover -s /project -p "tests.py"
+#python -m unittest discover -s /project -p "tests.py"
 
 # Deactivate the virtual environment (replace "made" with the name of your virtual environment)
 # Uncomment the line below if you are using a virtual environment
 # deactivate
+
+ 
+
+# Replace the following command with the actual command to run your tests
+echo "Running tests..."
+python project/tests.py
