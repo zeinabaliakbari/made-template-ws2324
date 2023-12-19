@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      
 
 jobs:
   test:
@@ -11,11 +12,11 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v7
+      uses: actions/checkout@v3
 
 
     - name: Set up Python 3.11
-      uses: actions/setup-python@v7
+      uses: actions/setup-python@v3
       with:
         python-version: 3.11
   
