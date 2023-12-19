@@ -217,7 +217,7 @@ class Pipeline:
             
            #
             self.zero_with_mean_onecolumn()
-            self.preprocess_data()
+           # self.preprocess_data()
             self.df1.to_csv('data/KidneyDisease.csv', index=False)
             self.df2.to_csv('data/diabetes.csv', index=False)
             #merged_df = data_pipeline.merge_dataframes(df1, df2)
