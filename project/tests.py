@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 import os
 import unittest
 from pathlib import Path
-from pipeline2 import Pipeline  # Replace with the actual module name where your Pipeline class is defined
+from pipeline import Pipeline  # Replace with the actual module name where your Pipeline class is defined
 
 class TestPipeline(unittest.TestCase):
     def setUp(self):
