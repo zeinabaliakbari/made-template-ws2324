@@ -14,11 +14,8 @@ pipeline BahnhofPipeline {
         -> BahnhofTableInterpreter
         -> BahnhofSQLiteLoader;
     
-
     //  After the pipeline structure, we define the blocks used.
-    block BahnhofExtractor oftype HttpExtractor {
-
-     
+    block BahnhofExtractor oftype HttpExtractor {     
  
         url: "https://download-data.deutschebahn.com/static/datasets/haltestellen/D_Bahnhof_2020_alle.CSV";
     }
