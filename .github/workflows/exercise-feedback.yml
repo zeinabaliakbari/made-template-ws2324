@@ -32,7 +32,7 @@ jobs:
       run: |
         ./grading/ci/setup_jayvee.sh
 
-    # Install python
+    # Install python 3.11
     - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
