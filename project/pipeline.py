@@ -194,7 +194,8 @@ class Pipeline:
 
     def save_to_sqlite(self, table_name1, table_name2):
         output_database_path = os.path.join(self.output_directory, 'madedb.sqlite')
-        engine = create_engine(f'sqlite:///{output_database_path}')
+    #    engine = create_engine(f'sqlite:///{output_database_path}') this is specific for local system
+        engine = create_engine('sqlite:///data/madedb.sqlite') # specific for GitHub
         self.df1.to_sql(table_name1, engine, index=False, if_exists='replace')
         self.df2.to_sql(table_name2, engine, index=False, if_exists='replace')
         engine.dispose()
