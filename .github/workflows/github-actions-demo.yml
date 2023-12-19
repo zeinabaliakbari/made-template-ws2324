@@ -28,4 +28,4 @@ jobs:
         pip install -r project/requirements.txt
 
     - name: Run Tests
-      run: bash project/test.sh
+      run: bash project/tests.sh
