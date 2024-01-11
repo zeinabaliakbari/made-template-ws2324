@@ -16,8 +16,8 @@ The primary objectives of this project are:
 
 The analysis will be conducted using two distinct datasets:
 
-1. [Diabetes Dataset](https://www.kaggle.com/datasets/uciml/pima-indians-diabetes-database/data?select=diabetes.csv): This dataset contains information relevant to diabetes.
-2. [Chronic Kidney Disease Dataset](https://github.com/aiplanethub/Datasets/blob/master/Chronic%20Kidney%20Disease%20(CKD)%20Dataset/ChronicKidneyDisease.csv): This dataset contains information relevant to chronic kidney disease.
+1. [Diabetes Dataset](https://raw.githubusercontent.com/npradaschnor/Pima-Indians-Diabetes-Dataset/master/diabetes.csv): This dataset contains information relevant to diabetes.
+2. [Chronic Kidney Disease Dataset](https://raw.githubusercontent.com/aiplanethub/Datasets/master/Chronic%20Kidney%20Disease%20(CKD)%20Dataset/ChronicKidneyDisease.csv): This dataset contains information relevant to chronic kidney disease.
 
 ## Methodology
 
