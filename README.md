@@ -30,6 +30,7 @@ Following link provide you with a detailed report about entire analysis and mode
 ## My presentation file and video 
 Following link provide you with My presentation:
 [Presentation file](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/presentation-video.mp4)
+and 
 [Presentation video](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/slides.pdf)
 
 
