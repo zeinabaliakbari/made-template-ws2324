@@ -28,7 +28,7 @@ Following link provide you with a detailed report about entire analysis and mode
 [Project Report](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/report.ipynb)
 
 ## My presentation file and video 
-Following link provide you with My presentation pdf file:
+Following link provide you with my presentation pdf file:
 [Presentation file](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/slides.pdf)
 
 and you can download my presentation video from the following link:  
