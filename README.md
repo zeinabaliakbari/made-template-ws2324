@@ -27,6 +27,11 @@ In this project we employed Machine learning algorithms and statistical analysis
 Following link provide you with a detailed report about entire analysis and modeling process:
 [Project Report](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/report.ipynb)
 
+## My presentation file and video 
+Following link provide you with My presentation:
+[Presentation file](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/presentation-video.mp4)
+[Presentation video](https://github.com/zeinabaliakbari/made-template-ws2324/blob/main/project/slides.pdf)
+
 
 ## Usage
 
