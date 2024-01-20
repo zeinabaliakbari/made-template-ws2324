@@ -80,7 +80,7 @@ pipeline dataPipeline {
         header: true;
         columns: [
  
-            "Geraet" oftype text,
+            "Geraet" oftype integer,
             "Hersteller" oftype text,
             "Model" oftype text,
             "Monat" oftype text,
@@ -108,11 +108,11 @@ pipeline dataPipeline {
     // Inputs and outputs have to be further described by a valuetype. Celsius to 
     transform CelsiustoFahrenheit {
         from TemperatureInCelsius oftype decimal;
-        to Fahrenheit oftype integer;
+        to Fahrenheit oftype decimal;
 
         // 7. In order to express what the transform function does, 
         // we assign an expression to the output. Values from the input and output of the transform can be referred to by name.
-        Fahrenheit: round ((TemperatureInCelsius * 9/5)+ 32);
+        Fahrenheit: (TemperatureInCelsius * 9/5)+ 32;
     }
 
 
