@@ -1,0 +1,128 @@
+ //   This Jayvee model describes a pipeline 
+// from a CSV file in the web 
+ 
+pipeline dataPipeline {
+    // See here for meta-data of the data source
+    //  url: "https://download-data.deutschebahn.com/static/datasets/haltestellen/D_Bahnhof_2020_alle.CSV"
+
+    //  At the top of a pipeline, we describe the
+    // structure of the pipeline. 
+    GTFSSampleFeedExtractor -> ZipArchiveInterpreter;
+
+    ZipArchiveInterpreter
+        -> dataFilePicker
+        -> dataTextFileInterpreter
+        -> dataCSVInterpreter
+        -> NameHeaderWriter1
+        -> NameHeaderWriter2        
+        -> dataColumnDeleter        
+        -> dataTableInterpreter  
+        -> tempTransformer1  
+        -> tempTransformer2      
+        -> dataSQLiteLoader;
+    
+    block GTFSSampleFeedExtractor oftype HttpExtractor {
+
+        url: "https://www.mowesta.com/data/measure/mowesta-dataset-20221107.zip";
+    }
+    //  After the pipeline structure, we define the blocks used.
+ 
+    block ZipArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+
+    block dataFilePicker oftype FilePicker {
+        path: "/data.csv";
+    }
+    block dataTextFileInterpreter oftype TextFileInterpreter { }  
+ 
+    //   The HttpExtractor requires no input and produces a binary file as output.
+ 
+   
+    //   Next, we interpret the text file as sheet.
+ 
+    block dataCSVInterpreter oftype CSVInterpreter {
+
+        delimiter: ";";
+
+    }
+    block NameHeaderWriter1 oftype CellWriter {
+        // 12. We utilize a syntax similar to spreadsheet programs.
+        // Cell ranges can be described using the keywords "cell", "row", "column", or "range" that indicate which 
+        // cells are selected for the write action.
+        at: cell E1;
+
+        // 13. For each cell we selected with the "at" property above,
+        // we can specify what value shall be written into the cell.
+        write: ["Temperatur"];
+    }
+    block NameHeaderWriter2 oftype CellWriter {
+        // 12. We utilize a syntax similar to spreadsheet programs.
+        // Cell ranges can be described using the keywords "cell", "row", "column", or "range" that indicate which 
+        // cells are selected for the write action.
+        at: cell J1;
+
+        // 13. For each cell we selected with the "at" property above,
+        // we can specify what value shall be written into the cell.
+        write: ["Batterietemperatur"];
+    }
+// Delete Column Status
+
+/// Only use the columns "Geraet", "Hersteller", "Model", "Monat", "Temperatur in °C (DWD)", "Batterietemperatur in °C", "Geraet aktiv"
+
+
+    block dataColumnDeleter oftype ColumnDeleter {
+
+        delete: [column L, column M, column N, column O, column P ];
+ 
+    }    
+    block dataTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+ 
+            "Geraet" oftype text,
+            "Hersteller" oftype text,
+            "Model" oftype text,
+            "Monat" oftype text,
+            "Temperatur" oftype decimal,
+            "Batterietemperatur" oftype decimal,
+            "Geraet aktiv" oftype text,
+ 
+            
+        ];
+    }
+
+    block tempTransformer1 oftype TableTransformer {
+        inputColumns: ["Temperatur"];
+        outputColumn: "Temperatur";
+        use: CelsiustoFahrenheit;
+    }
+    block tempTransformer2 oftype TableTransformer {
+        inputColumns: ["Batterietemperatur"];
+        outputColumn: "Batterietemperatur";
+        use: CelsiustoFahrenheit;
+    }
+
+    // 6. Here, we define a transform function, taking parameters (TemperatureInCelsius * 9/5) + 32
+    // as input ("from" keyword), and producing an output ("to" keyword).
+    // Inputs and outputs have to be further described by a valuetype. Celsius to 
+    transform CelsiustoFahrenheit {
+        from TemperatureInCelsius oftype decimal;
+        to Fahrenheit oftype integer;
+
+        // 7. In order to express what the transform function does, 
+        // we assign an expression to the output. Values from the input and output of the transform can be referred to by name.
+        Fahrenheit: round ((TemperatureInCelsius * 9/5)+ 32);
+    }
+
+
+ 
+    block dataSQLiteLoader oftype SQLiteLoader {
+        table: "temperatures";
+        file: "temperatures.sqlite";
+    }
+
+
+}
+
+ 
