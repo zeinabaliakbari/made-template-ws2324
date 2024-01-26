@@ -10,7 +10,7 @@ def download_and_extract_gtfs_data(url, zip_file_path, extract_folder):
 
 def load_and_filter_stops_data(csv_path):
     columns_to_select = ['stop_id', 'stop_name', 'stop_lat', 'stop_lon', 'zone_id']
-    stops_df = pd.read_csv(csv_path, usecols=columns_to_select, dtype={'stop_id': 'str', 'stop_name': 'str', 'stop_lat': 'float', 'stop_lon': 'float', 'zone_id': 'int'}, encoding='utf-8')
+    stops_df = pd.read_csv(csv_path, usecols=columns_to_select, dtype={'stop_id': 'int', 'stop_name': 'str', 'stop_lat': 'float', 'stop_lon': 'float', 'zone_id': 'int'}, encoding='utf-8')
     stops_df = stops_df[(stops_df['zone_id'] == 2001) & 
                         (stops_df['stop_lat'] >= -90) & (stops_df['stop_lat'] <= 90) & 
                         (stops_df['stop_lon'] >= -90) & (stops_df['stop_lon'] <= 90)]
@@ -57,7 +57,7 @@ def main():
     conn, cursor = connect_to_database(db_name)
 
     # Create SQLite table with appropriate types
-    sqlite_types = {'stop_id': 'TEXT', 'stop_name': 'TEXT', 
+    sqlite_types = {'stop_id': 'INTEGER', 'stop_name': 'TEXT', 
                     'stop_lat': 'REAL', 'stop_lon': 'REAL', 
                     'zone_id': 'INTEGER'}
     table_name = 'stops'
