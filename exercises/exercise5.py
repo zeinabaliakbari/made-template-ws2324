@@ -20,11 +20,11 @@ def create_database_and_table(conn):
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS stops (
-            stop_id TEXT PRIMARY KEY,
+            stop_id INT PRIMARY KEY,
             stop_name TEXT,
-            stop_lat FLOAT,
-            stop_lon FLOAT,
-            zone_id TEXT
+            stop_lat  REAL ,
+            stop_lon  REAL ,
+            zone_id INT
         )
     ''')
     conn.commit()
